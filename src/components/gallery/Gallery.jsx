@@ -1,17 +1,5 @@
 import Header from "../../components/header/Header";
-
-const videos = [
-  {
-    src: "/a-taste-of-bulgaria-a-culinary-journey.mp4",
-    title: "Рецепта за таратор",
-    badge: "🤖 AI видео • Таратор",
-  },
-  {
-    src: "/restaurant-kitchen-scene.mp4",
-    title: "Нужни колинарни средства",
-    badge: "🤖 AI видео • Кулинарство",
-  },
-];
+import { videos } from "../../data/videoData";
 
 export default function Gallery() {
   return (
@@ -23,38 +11,68 @@ export default function Gallery() {
           <div className="col-lg-10">
             <div className="card shadow-lg border-0 rounded-4 mb-5 text-white bg-primary bg-gradient">
               <div className="card-body p-5 text-center">
-                <h1 className="display-4 fw-bold">🎥 Кулинарна AI Галерия</h1>
+                <h1 className="display-4 fw-bold">🎥 Кулинарна Галерия</h1>
                 <p className="lead opacity-75 mb-0">
-                  Уникално съдържание, генерирано изцяло с изкуствен интелект.
+                  Уникално съдържание, генерирано с изкуствен и естествен интелект.
                 </p>
               </div>
             </div>
 
             <div className="row g-4">
-              {videos.map((v, i) => (
-                <div key={i} className="col-12 col-md-6 col-xl-4">
-                  <div className="card h-100 border-0 shadow rounded-4 overflow-hidden">
-                    <div className="ratio ratio-16x9 bg-dark">
-                      <video
-                        className="w-100 h-100"
-                        src={v.src}
-                        controls
-                        preload="metadata"
-                        playsInline
-                      />
-                    </div>
+  {videos.map((v, i) => {
+    const embedSrc =
+      v.type === "youtube" ? `https://www.youtube.com/embed/${v.youtubeId}` : null;
+    const watchUrl =
+      v.type === "youtube" ? `https://www.youtube.com/watch?v=${v.youtubeId}` : null;
 
-                    <div className="card-body">
-                      <h5 className="card-title fw-bold text-dark mb-2">
-                        {v.title}
-                      </h5>
+    return (
+      <div key={i} className="col-12 col-md-6 col-xl-4">
+        <div className="card h-100 border-0 shadow rounded-4 overflow-hidden">
+          <div className="ratio ratio-16x9 bg-dark">
+            {v.type === "youtube" ? (
+              <iframe
+                src={embedSrc}
+                title={v.title}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="strict-origin-when-cross-origin"
+              />
+            ) : (
+              <video
+                className="w-100 h-100"
+                src={v.src}
+                controls
+                preload="metadata"
+                playsInline
+              />
+            )}
+          </div>
 
-                      <span className="badge bg-info text-dark">{v.badge}</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
+          <div className="card-body">
+            <h5 className="card-title fw-bold text-dark mb-2">{v.title}</h5>
+
+            <div className="d-flex align-items-center justify-content-between gap-2">
+              <span className={`badge ${v.badgeClass}`}>{v.badge}</span>
+
+              {v.type === "youtube" && (
+                <a
+                  className="btn btn-sm btn-outline-secondary"
+                  href={watchUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Отвори в YouTube
+                </a>
+              )}
             </div>
+          </div>
+        </div>
+      </div>
+    );
+  })}
+</div>
+
 
             {/* По желание: кратък блок “процеси” за защита */}
             <div className="alert alert-secondary border-0 shadow-sm rounded-4 mt-4 mb-0">

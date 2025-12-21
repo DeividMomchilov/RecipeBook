@@ -9,7 +9,7 @@ export default function Header() {
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark py-3 shadow sticky-top">
             <div className="container">
                 <Link className="navbar-brand fs-3 fw-bold text-warning" to="/">
-                    👨‍🍳 Моите Рецепти
+                    👨‍🍳 Вкусни Рецепти
                 </Link>
                 
                 <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
