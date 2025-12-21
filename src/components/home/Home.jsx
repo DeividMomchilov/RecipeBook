@@ -1,14 +1,144 @@
 import { useState } from "react";
 import Header from '../../components/header/Header';
+import { Link } from "react-router";
 
 const recipesData = [
-    { id: 1, title: "Шопска Салата", cat: "Салати", img: "https://via.placeholder.com/300x200/ff7f7f/333333?text=Salad", desc: "Класическа българска салата с пресни домати, краставици и сирене." },
-    { id: 2, title: "Мусака", cat: "Основни", img: "https://via.placeholder.com/300x200/ffd700/333333?text=Musaka", desc: "Традиционно ястие с картофи, кайма и заливка." },
-    { id: 3, title: "Баница", cat: "Тестени", img: "https://via.placeholder.com/300x200/ffa500/333333?text=Banitsa", desc: "Любимата закуска на всеки българин със сирене и яйца." },
-    { id: 4, title: "Таратор", cat: "Супи", img: "https://via.placeholder.com/300x200/add8e6/333333?text=Tarator", desc: "Студена супа с кисело мляко, краставици и орехи." },
-    { id: 5, title: "Пълнени чушки", cat: "Основни", img: "https://via.placeholder.com/300x200/ff6347/333333?text=Peppers", desc: "Чушки пълнени с ориз и кайма, печени на фурна." },
-];
-
+    {
+      id: 1,
+      title: "Шопска Салата",
+      cat: "Салати",
+      img: "https://commons.wikimedia.org/wiki/Special:FilePath/Shopska_Salad.JPG?width=900",
+      desc: "Класическа българска салата с пресни домати, краставици и сирене.",
+    },
+    {
+      id: 2,
+      title: "Мусака",
+      cat: "Основни",
+      img: "https://commons.wikimedia.org/wiki/Special:FilePath/Musaka_Sofia_2012_PD_1.jpg?width=900",
+      desc: "Традиционно ястие с картофи, кайма и заливка.",
+    },
+    {
+      id: 3,
+      title: "Баница",
+      cat: "Тестени",
+      img: "https://commons.wikimedia.org/wiki/Special:FilePath/Banitsa_and_yogurt.jpg?width=900",
+      desc: "Любимата закуска на всеки българин със сирене и яйца.",
+    },
+    {
+      id: 4,
+      title: "Таратор",
+      cat: "Супи",
+      img: "https://commons.wikimedia.org/wiki/Special:FilePath/Bulgarian_Tarator.jpg?width=900",
+      desc: "Студена супа с кисело мляко, краставици и орехи.",
+    },
+    {
+      id: 5,
+      title: "Пълнени чушки",
+      cat: "Основни",
+      img: "https://commons.wikimedia.org/wiki/Special:FilePath/Stuffed_Peppers.jpg?width=900",
+      desc: "Чушки пълнени с ориз и кайма, печени на фурна.",
+    },
+    {
+        id: 6,
+        title: "Кебапчета",
+        cat: "Скара",
+        img: "https://commons.wikimedia.org/wiki/Special:FilePath/Kebapcheta.JPG?width=900",
+        desc: "Класически кебапчета от кайма и подправки."
+      },
+      {
+        id: 7,
+        title: "Кюфтета",
+        cat: "Скара",
+        img: "https://commons.wikimedia.org/wiki/Special:FilePath/Kyufte.jpg?width=900",
+        desc: "Сочни кюфтета от кайма, лук и подправки."
+      },
+      {
+        id: 8,
+        title: "Сарми",
+        cat: "Основни",
+        img: "https://commons.wikimedia.org/wiki/Special:FilePath/Sarmi.jpg?width=900",
+        desc: "Сарми с ориз и подправки, завити в зелев/лозов лист."
+      },
+      {
+        id: 9,
+        title: "Лютеница",
+        cat: "Разядки",
+        img: "https://commons.wikimedia.org/wiki/Special:FilePath/Lutenica.jpg?width=900",
+        desc: "Пикантна зеленчукова разядка от чушки и домати."
+      },
+      {
+        id: 10,
+        title: "Салата Снежанка",
+        cat: "Салати",
+        img: "https://commons.wikimedia.org/wiki/Special:FilePath/Snezhanka_Salad.jpg?width=900",
+        desc: "Салата с кисело мляко, краставици, чесън и орехи."
+      },
+      {
+        id: 11,
+        title: "Кавърма",
+        cat: "Основни",
+        img: "https://commons.wikimedia.org/wiki/Special:FilePath/Kavarma.jpeg?width=900",
+        desc: "Глинено ястие с месо, лук и подправки."
+      },
+      {
+        id: 12,
+        title: "Шкембе чорба",
+        cat: "Супи",
+        img: "https://commons.wikimedia.org/wiki/Special:FilePath/Shkembe-chorba.jpg?width=900",
+        desc: "Класическа чорба със шкембе и чесън/оцет по вкус."
+      },
+      {
+        id: 13,
+        title: "Яйца по панагюрски",
+        cat: "Закуски",
+        img: "https://commons.wikimedia.org/wiki/Special:FilePath/Panagyurishte-style_eggs.jpg?width=900",
+        desc: "Поширани яйца върху кисело мляко и сирене с масло и червен пипер."
+      },
+      {
+        id: 14,
+        title: "Качамак",
+        cat: "Основни",
+        img: "https://commons.wikimedia.org/wiki/Special:FilePath/Kachamak_(polenta).jpg?width=900",
+        desc: "Царевична каша, често сервирана със сирене и масло."
+      },
+      {
+        id: 15,
+        title: "Гювеч",
+        cat: "Основни",
+        img: "https://commons.wikimedia.org/wiki/Special:FilePath/%D0%93%D1%8E%D0%B2%D0%B5%D1%87.JPG?width=900",
+        desc: "Зеленчуково/месно ястие, печено бавно в глинен съд."
+      },
+      {
+        id: 16,
+        title: "Боб чорба",
+        cat: "Супи",
+        img: "https://commons.wikimedia.org/wiki/Special:FilePath/Bean_soup_with_tomatoes_and_red_peppers.jpeg?width=900",
+        desc: "Традиционна супа с боб, домати и подправки.",
+        receipe: "тук се описва каква е рецептата"
+      },
+      {
+        id: 17,
+        title: "Тиквеник",
+        cat: "Тестени",
+        img: "https://commons.wikimedia.org/wiki/Special:FilePath/Tikvenik_%28s%C3%BCt%C5%91t%C3%B6k%C3%B6s_b%C3%A1nica%29_k%C3%A9sz%C3%BCl_.jpg?width=900",
+        desc: "Сладка баница с тиква, захар и канела."
+      },
+      {
+        id: 18,
+        title: "Торта Гараш",
+        cat: "Десерти",
+        img: "https://commons.wikimedia.org/wiki/Special:FilePath/Garash.jpg?width=900",
+        desc: "Шоколадова торта с орехови блатове и ганаш."
+      },
+      {
+        id: 19,
+        title: "Луканка",
+        cat: "Мезета",
+        img: "https://commons.wikimedia.org/wiki/Special:FilePath/Lukanka.jpg?width=900",
+        desc: "Сушен колбас, типичен за българската кухня."
+      }
+    ];
+  
 export default function Home() {
     const [filter, setFilter] = useState("Всички");
 
@@ -68,7 +198,8 @@ export default function Home() {
                                         <div className="card-body">
                                             <h5 className="card-title fw-bold">{recipe.title}</h5>
                                             <p className="card-text text-muted small">{recipe.desc}</p>
-                                        </div>
+                                        </div>                                   
+                                        <button>Рецепта</button>
                                     </div>
                                 </div>
                             ))}
@@ -91,7 +222,7 @@ export default function Home() {
                                 </div>
                             </div>
 
-                            {/* Топ Продукт */}
+                            
                             <div className="card shadow border-0 rounded-4 overflow-hidden">
                                 <div className="card-header bg-white fw-bold py-3 border-bottom-0">
                                     🏆 Топ Продукт
