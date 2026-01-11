@@ -73,19 +73,13 @@ export default function Gallery() {
   })}
 </div>
 
-
-            {/* По желание: кратък блок “процеси” за защита */}
-            <div className="alert alert-secondary border-0 shadow-sm rounded-4 mt-4 mb-0">
-              <strong>AI процеси (пример):</strong> Text-to-Speech, Auto Subtitles (Speech-to-Text),
-              Script → Video (генеративни кадри).
-            </div>
           </div>
         </div>
       </main>
 
       <footer className="bg-dark text-white text-center py-4 mt-auto">
         <div className="container">
-          <small>&copy; 2024 Курсов проект | React + Bootstrap</small>
+          <small>&copy; 2026 Курсов проект | React + Bootstrap</small>
         </div>
       </footer>
     </div>

@@ -18,7 +18,6 @@ const categoryIcons = {
 export default function Home() {
   const [filter, setFilter] = useState("Всички");
 
-  // ✅ държим отворено/затворено по id
   const [openRecipeById, setOpenRecipeById] = useState({});
 
   const toggleRecipe = (id) => {
@@ -111,7 +110,6 @@ export default function Home() {
                           {isOpen ? "Скрий рецепта" : "Рецепта"}
                         </button>
 
-                        {/* ✅ Показване на рецептата под бутона */}
                         {isOpen && recipe.recipe && (
                           <div className="mt-3 p-3 bg-white rounded-3 border">
                             <div className="mb-2 fw-bold">🧾 Съставки:</div>
@@ -178,7 +176,7 @@ export default function Home() {
 
       <footer className="bg-dark text-white text-center py-4 mt-auto">
         <div className="container">
-          <p className="mb-0 small">&copy; 2024 Курсов проект "Уеб Програмиране"</p>
+          <p className="mb-0 small">&copy; 2026 Курсов проект "Уеб Програмиране"</p>
         </div>
       </footer>
     </div>

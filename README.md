@@ -1,7 +1,7 @@
 # RecipeBook 🇧🇬 (React + Bootstrap)
 
 A simple Bulgarian recipe book web app built with **React (Vite)** and **Bootstrap**.  
-Includes recipe browsing by categories, expandable “show/hide recipe” sections, and a **video gallery** with both **AI-generated videos (local mp4)** and **YouTube recipe videos**.
+Includes recipe browsing by categories, expandable “show/hide recipe” sections, and a **video gallery** with both **AI-generated videos** and **YouTube recipe videos**.
 
 ---
 
@@ -12,8 +12,8 @@ Includes recipe browsing by categories, expandable “show/hide recipe” sectio
 - ✅ **Show/Hide recipe** per card (ingredients + steps)
 - ✅ **Responsive layout** (Bootstrap grid)
 - ✅ **Video Gallery**
-  - 🤖 AI videos (local `.mp4` from `/public`)
-  - ▶️ YouTube videos (embedded)
+  - 🤖 AI videos
+  - ▶️ YouTube videos
 
 ---
 
@@ -21,7 +21,6 @@ Includes recipe browsing by categories, expandable “show/hide recipe” sectio
 
 - **React** + **Vite**
 - **Bootstrap 5**
-- **React Router** (for navigation/pages)
 
 ---
 
