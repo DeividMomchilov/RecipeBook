@@ -1,5 +1,4 @@
 export const videos = [
-    // ✅ AI (локални в /public)
     {
       type: "ai",
       src: "/a-taste-of-bulgaria-a-culinary-journey.mp4",
@@ -15,7 +14,6 @@ export const videos = [
       badgeClass: "bg-info text-dark",
     },
   
-    // ✅ YouTube (реални видео рецепти)
     {
       type: "youtube",
       youtubeId: "jZME7dhL_sY",

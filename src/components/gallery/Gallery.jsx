@@ -1,4 +1,5 @@
 import Header from "../../components/header/Header";
+import Footer from "../footer/Footer";
 import { videos } from "../../data/videoData";
 
 export default function Gallery() {
@@ -19,69 +20,63 @@ export default function Gallery() {
             </div>
 
             <div className="row g-4">
-  {videos.map((v, i) => {
-    const embedSrc =
-      v.type === "youtube" ? `https://www.youtube.com/embed/${v.youtubeId}` : null;
-    const watchUrl =
-      v.type === "youtube" ? `https://www.youtube.com/watch?v=${v.youtubeId}` : null;
+              {videos.map((video) => {
+                const key = video.type === "youtube" 
+                  ? `youtube-${video.youtubeId}` 
+                  : `ai-${video.src}`;
 
-    return (
-      <div key={i} className="col-12 col-md-6 col-xl-4">
-        <div className="card h-100 border-0 shadow rounded-4 overflow-hidden">
-          <div className="ratio ratio-16x9 bg-dark">
-            {v.type === "youtube" ? (
-              <iframe
-                src={embedSrc}
-                title={v.title}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-                loading="lazy"
-                referrerPolicy="strict-origin-when-cross-origin"
-              />
-            ) : (
-              <video
-                className="w-100 h-100"
-                src={v.src}
-                controls
-                preload="metadata"
-                playsInline
-              />
-            )}
-          </div>
+                return (
+                  <div key={key} className="col-12 col-md-6 col-xl-4">
+                    <div className="card h-100 border-0 shadow rounded-4 overflow-hidden">
+                      <div className="ratio ratio-16x9 bg-dark">
+                        {video.type === "youtube" ? (
+                          <iframe
+                            src={`https://www.youtube.com/embed/${video.youtubeId}`}
+                            title={video.title}
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            allowFullScreen
+                            loading="lazy"
+                            referrerPolicy="strict-origin-when-cross-origin"
+                          />
+                        ) : (
+                          <video
+                            className="w-100 h-100"
+                            src={video.src}
+                            controls
+                            preload="metadata"
+                            playsInline
+                          />
+                        )}
+                      </div>
 
-          <div className="card-body">
-            <h5 className="card-title fw-bold text-dark mb-2">{v.title}</h5>
+                      <div className="card-body">
+                        <h5 className="card-title fw-bold text-dark mb-2">{video.title}</h5>
 
-            <div className="d-flex align-items-center justify-content-between gap-2">
-              <span className={`badge ${v.badgeClass}`}>{v.badge}</span>
+                        <div className="d-flex align-items-center justify-content-between gap-2">
+                          <span className={`badge ${video.badgeClass}`}>{video.badge}</span>
 
-              {v.type === "youtube" && (
-                <a
-                  className="btn btn-sm btn-outline-secondary"
-                  href={watchUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Отвори в YouTube
-                </a>
-              )}
+                          {video.type === "youtube" && (
+                            <a
+                              className="btn btn-sm btn-outline-secondary"
+                              href={`https://www.youtube.com/watch?v=${video.youtubeId}`}
+                              target="_blank"
+                              rel="noreferrer"
+                            >
+                              Отвори в YouTube
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
-          </div>
-        </div>
-      </div>
-    );
-  })}
-</div>
-
           </div>
         </div>
       </main>
 
-      <footer className="bg-dark text-white text-center py-4 mt-auto">
-        <div className="container">
-          <small>&copy; 2026 Курсов проект | React + Bootstrap</small>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

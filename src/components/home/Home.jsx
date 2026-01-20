@@ -1,31 +1,25 @@
 import { useMemo, useState } from "react";
 import Header from '../../components/header/Header';
+import Footer from '../footer/Footer';
 import { recipesData } from "../../data/recipesData";
-  
-const categoryIcons = {
-  Всички: "📋",
-  Салати: "🥗",
-  Основни: "🍲",
-  Тестени: "🥧",
-  Супи: "🥣",
-  Десерти: "🍰",
-  Скара: "🔥",
-  Разядки: "🫙",
-  Закуски: "🍳",
-  Мезета: "🥓",
-};
+import Recipe from '../receipe/Receipe';
+import { categoryIcons } from '../../constants/categoryIcons';
+
+const STICKY_TOP_OFFSET = "100px";
 
 export default function Home() {
   const [filter, setFilter] = useState("Всички");
-
   const [openRecipeById, setOpenRecipeById] = useState({});
 
   const toggleRecipe = (id) => {
     setOpenRecipeById((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const filteredRecipes =
-    filter === "Всички" ? recipesData : recipesData.filter((r) => r.cat === filter);
+  const filteredRecipes = useMemo(() => {
+    return filter === "Всички" 
+      ? recipesData 
+      : recipesData.filter((r) => r.cat === filter);
+  }, [filter]);
 
   const categories = useMemo(() => {
     const unique = Array.from(new Set(recipesData.map((r) => r.cat)));
@@ -39,7 +33,7 @@ export default function Home() {
       <div className="container my-5 flex-grow-1">
         <div className="row g-4">
           <aside className="col-xl-3 d-none d-xl-block">
-            <div className="card shadow border-0 rounded-4 position-sticky" style={{ top: "100px" }}>
+            <div className="card shadow border-0 rounded-4 position-sticky" style={{ top: STICKY_TOP_OFFSET }}>
               <div className="card-header bg-warning text-dark fw-bold rounded-top-4 py-3">
                 🍽️ Категории
               </div>
@@ -53,7 +47,6 @@ export default function Home() {
                     onClick={() => setFilter(cat)}
                   >
                     {categoryIcons[cat] ?? "🍽️"} {cat}
-
                   </button>
                 ))}
               </div>
@@ -80,58 +73,19 @@ export default function Home() {
             </div>
 
             <div className="row g-4">
-              {filteredRecipes.map((recipe) => {
-                const isOpen = !!openRecipeById[recipe.id];
-
-                return (
-                  <div key={recipe.id} className="col-md-6">
-                    <div className="card h-100 border-0 shadow-lg rounded-4 overflow-hidden recipe-card">
-                      <div className="position-relative">
-                        <img
-                          src={recipe.img}
-                          className="card-img-top object-fit-cover"
-                          alt={recipe.title}
-                          style={{ height: "200px" }}
-                        />
-                        <span className="position-absolute top-0 end-0 badge bg-warning text-dark m-2 shadow-sm">
-                          {recipe.cat}
-                        </span>
-                      </div>
-
-                      <div className="card-body">
-                        <h5 className="card-title fw-bold">{recipe.title}</h5>
-                        <p className="card-text text-muted small mb-3">{recipe.desc}</p>
-
-                        <button
-                          className="btn btn-outline-warning btn-sm w-100 fw-bold"
-                          onClick={() => toggleRecipe(recipe.id)}
-                          type="button"
-                        >
-                          {isOpen ? "Скрий рецепта" : "Рецепта"}
-                        </button>
-
-                        {isOpen && recipe.recipe && (
-                          <div className="mt-3 p-3 bg-white rounded-3 border">
-                            <div className="mb-2 fw-bold">🧾 Съставки:</div>
-                            <ul className="small mb-3">
-                              {recipe.recipe.ingredients.map((x, idx) => (
-                                <li key={idx}>{x}</li>
-                              ))}
-                            </ul>
-
-                            <div className="mb-2 fw-bold">👨‍🍳 Стъпки:</div>
-                            <ol className="small mb-0">
-                              {recipe.recipe.steps.map((s, idx) => (
-                                <li key={idx}>{s}</li>
-                              ))}
-                            </ol>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+              {filteredRecipes.map((recipe) => (
+                <Recipe
+                  key={recipe.id}
+                  id={recipe.id}
+                  img={recipe.img}
+                  title={recipe.title}
+                  desc={recipe.desc}
+                  cat={recipe.cat}
+                  recipe={recipe.recipe}
+                  isOpen={!!openRecipeById[recipe.id]}
+                  onToggle={toggleRecipe}
+                />
+              ))}
 
               {filteredRecipes.length === 0 && (
                 <div className="alert alert-warning text-center">
@@ -142,7 +96,7 @@ export default function Home() {
           </main>
 
           <aside className="col-xl-3 d-none d-xl-block">
-            <div className="position-sticky" style={{ top: "100px" }}>
+            <div className="position-sticky" style={{ top: STICKY_TOP_OFFSET }}>
               <div className="card shadow border-0 rounded-4 mb-4 bg-primary bg-opacity-10">
                 <div className="card-body">
                   <h5 className="card-title text-primary fw-bold">💡 Съвет на деня</h5>
@@ -174,11 +128,7 @@ export default function Home() {
         </div>
       </div>
 
-      <footer className="bg-dark text-white text-center py-4 mt-auto">
-        <div className="container">
-          <p className="mb-0 small">&copy; 2026 Курсов проект "Уеб Програмиране"</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
