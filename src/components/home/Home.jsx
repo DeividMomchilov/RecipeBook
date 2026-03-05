@@ -10,6 +10,7 @@ const STICKY_TOP_OFFSET = "100px";
 export default function Home() {
   const [filter, setFilter] = useState("Всички");
   const [openRecipeById, setOpenRecipeById] = useState({});
+  const [searchTerm, setSearchTerm] = useState("");
 
   const PAGE_SIZE = 10;
   const [currentPage, setCurrentPage] = useState(1);
@@ -19,14 +20,32 @@ export default function Home() {
   };
 
   const filteredRecipes = useMemo(() => {
-    return filter === "Всички" 
-      ? recipesData 
+    return filter === "Всички"
+      ? recipesData
       : recipesData.filter((r) => r.cat === filter);
   }, [filter]);
 
+  const searchedRecipes = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+    if (!term) return filteredRecipes;
+
+    return filteredRecipes.filter((r) => {
+      const haystack = [
+        r.title,
+        r.desc,
+        Array.isArray(r.recipe) ? r.recipe.join(" ") : r.recipe,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+
+      return haystack.includes(term);
+    });
+  }, [filteredRecipes, searchTerm]);
+
   const totalPages = useMemo(() => {
-    return Math.max(1, Math.ceil(filteredRecipes.length / PAGE_SIZE));
-  }, [filteredRecipes]);
+    return Math.max(1, Math.ceil(searchedRecipes.length / PAGE_SIZE));
+  }, [searchedRecipes]);
 
   const categories = useMemo(() => {
     const unique = Array.from(new Set(recipesData.map((r) => r.cat)));
@@ -36,8 +55,8 @@ export default function Home() {
   const paginatedRecipes = useMemo(() => {
     const start = (currentPage - 1) * PAGE_SIZE;
     const end = start + PAGE_SIZE;
-    return filteredRecipes.slice(start, end);
-  }, [filteredRecipes, currentPage]);
+    return searchedRecipes.slice(start, end);
+  }, [searchedRecipes, currentPage]);
 
   return (
     <div className="bg-light min-vh-100 d-flex flex-column">
@@ -91,7 +110,32 @@ export default function Home() {
               </select>
             </div>
 
+            <div className="input-group mb-4 shadow-sm">
+              <span className="input-group-text bg-white border-warning text-muted">
+                🔍
+              </span>
+              <input
+                type="text"
+                className="form-control border-warning"
+                placeholder="Търси рецепта по име, описание или съдържание..."
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
+                }}
+              />
+            </div>
+
             <div className="row g-4">
+              {searchedRecipes.length === 0 && (
+                <div className="col-12">
+                  <div className="alert alert-warning mb-0" role="alert">
+                    Не са намерени рецепти по зададените критерии.
+                    Опитайте с друга ключова дума или категория.
+                  </div>
+                </div>
+              )}
+
               {paginatedRecipes.map((recipe) => (
                 <Recipe
                   key={recipe.id}
@@ -106,7 +150,7 @@ export default function Home() {
                 />
               ))}
 
-              {filteredRecipes.length > 0 && totalPages > 1 && (
+              {searchedRecipes.length > 0 && totalPages > 1 && (
                 <div className="d-flex justify-content-center align-items-center gap-3 mt-4">
                   <button
                     className="btn btn-outline-warning btn-sm fw-bold"
