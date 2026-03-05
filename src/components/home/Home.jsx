@@ -10,21 +10,66 @@ const STICKY_TOP_OFFSET = "100px";
 export default function Home() {
   const [filter, setFilter] = useState("Всички");
   const [openRecipeById, setOpenRecipeById] = useState({});
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const PAGE_SIZE = 10;
+  const [currentPage, setCurrentPage] = useState(1);
 
   const toggleRecipe = (id) => {
     setOpenRecipeById((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
   const filteredRecipes = useMemo(() => {
-    return filter === "Всички" 
-      ? recipesData 
+    return filter === "Всички"
+      ? recipesData
       : recipesData.filter((r) => r.cat === filter);
   }, [filter]);
+
+  const searchedRecipes = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+    if (!term) return filteredRecipes;
+
+    return filteredRecipes.filter((r) => {
+      const parts = [r.title, r.desc];
+
+      if (r.recipe) {
+        if (Array.isArray(r.recipe)) {
+          parts.push(r.recipe.join(" "));
+        } else if (typeof r.recipe === "string") {
+          parts.push(r.recipe);
+        } else if (typeof r.recipe === "object") {
+          if (Array.isArray(r.recipe.ingredients)) {
+            parts.push(r.recipe.ingredients.join(" "));
+          }
+          if (Array.isArray(r.recipe.steps)) {
+            parts.push(r.recipe.steps.join(" "));
+          }
+        }
+      }
+
+      const haystack = parts
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+
+      return haystack.includes(term);
+    });
+  }, [filteredRecipes, searchTerm]);
+
+  const totalPages = useMemo(() => {
+    return Math.max(1, Math.ceil(searchedRecipes.length / PAGE_SIZE));
+  }, [searchedRecipes]);
 
   const categories = useMemo(() => {
     const unique = Array.from(new Set(recipesData.map((r) => r.cat)));
     return ["Всички", ...unique];
   }, []);
+
+  const paginatedRecipes = useMemo(() => {
+    const start = (currentPage - 1) * PAGE_SIZE;
+    const end = start + PAGE_SIZE;
+    return searchedRecipes.slice(start, end);
+  }, [searchedRecipes, currentPage]);
 
   return (
     <div className="bg-light min-vh-100 d-flex flex-column">
@@ -44,7 +89,10 @@ export default function Home() {
                     className={`list-group-item list-group-item-action py-3 ${
                       filter === cat ? "active bg-warning text-dark border-warning fw-bold" : ""
                     }`}
-                    onClick={() => setFilter(cat)}
+                    onClick={() => {
+                      setFilter(cat);
+                      setCurrentPage(1);
+                    }}
                   >
                     {categoryIcons[cat] ?? "🍽️"} {cat}
                   </button>
@@ -62,7 +110,10 @@ export default function Home() {
               <select
                 className="form-select shadow-sm"
                 value={filter}
-                onChange={(e) => setFilter(e.target.value)}
+                onChange={(e) => {
+                  setFilter(e.target.value);
+                  setCurrentPage(1);
+                }}
               >
                 {categories.map((cat) => (
                   <option key={cat} value={cat}>
@@ -72,8 +123,33 @@ export default function Home() {
               </select>
             </div>
 
+            <div className="input-group mb-4 shadow-sm">
+              <span className="input-group-text bg-white border-warning text-muted">
+                🔍
+              </span>
+              <input
+                type="text"
+                className="form-control border-warning"
+                placeholder="Търси рецепта по име, описание или съдържание..."
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
+                }}
+              />
+            </div>
+
             <div className="row g-4">
-              {filteredRecipes.map((recipe) => (
+              {searchedRecipes.length === 0 && (
+                <div className="col-12">
+                  <div className="alert alert-warning mb-0" role="alert">
+                    Не са намерени рецепти по зададените критерии.
+                    Опитайте с друга ключова дума или категория.
+                  </div>
+                </div>
+              )}
+
+              {paginatedRecipes.map((recipe) => (
                 <Recipe
                   key={recipe.id}
                   id={recipe.id}
@@ -87,9 +163,27 @@ export default function Home() {
                 />
               ))}
 
-              {filteredRecipes.length === 0 && (
-                <div className="alert alert-warning text-center">
-                  Няма намерени рецепти в тази категория.
+              {searchedRecipes.length > 0 && totalPages > 1 && (
+                <div className="d-flex justify-content-center align-items-center gap-3 mt-4">
+                  <button
+                    className="btn btn-outline-warning btn-sm fw-bold"
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                  >
+                    Назад
+                  </button>
+
+                  <span className="badge bg-warning text-dark px-3 py-2 shadow-sm">
+                    Страница {currentPage} от {totalPages}
+                  </span>
+
+                  <button
+                    className="btn btn-outline-warning btn-sm fw-bold"
+                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={currentPage === totalPages}
+                  >
+                    Напред
+                  </button>
                 </div>
               )}
             </div>
