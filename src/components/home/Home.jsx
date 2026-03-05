@@ -11,6 +11,9 @@ export default function Home() {
   const [filter, setFilter] = useState("Всички");
   const [openRecipeById, setOpenRecipeById] = useState({});
 
+  const PAGE_SIZE = 10;
+  const [currentPage, setCurrentPage] = useState(1);
+
   const toggleRecipe = (id) => {
     setOpenRecipeById((prev) => ({ ...prev, [id]: !prev[id] }));
   };
@@ -21,10 +24,20 @@ export default function Home() {
       : recipesData.filter((r) => r.cat === filter);
   }, [filter]);
 
+  const totalPages = useMemo(() => {
+    return Math.max(1, Math.ceil(filteredRecipes.length / PAGE_SIZE));
+  }, [filteredRecipes]);
+
   const categories = useMemo(() => {
     const unique = Array.from(new Set(recipesData.map((r) => r.cat)));
     return ["Всички", ...unique];
   }, []);
+
+  const paginatedRecipes = useMemo(() => {
+    const start = (currentPage - 1) * PAGE_SIZE;
+    const end = start + PAGE_SIZE;
+    return filteredRecipes.slice(start, end);
+  }, [filteredRecipes, currentPage]);
 
   return (
     <div className="bg-light min-vh-100 d-flex flex-column">
@@ -44,7 +57,10 @@ export default function Home() {
                     className={`list-group-item list-group-item-action py-3 ${
                       filter === cat ? "active bg-warning text-dark border-warning fw-bold" : ""
                     }`}
-                    onClick={() => setFilter(cat)}
+                    onClick={() => {
+                      setFilter(cat);
+                      setCurrentPage(1);
+                    }}
                   >
                     {categoryIcons[cat] ?? "🍽️"} {cat}
                   </button>
@@ -62,7 +78,10 @@ export default function Home() {
               <select
                 className="form-select shadow-sm"
                 value={filter}
-                onChange={(e) => setFilter(e.target.value)}
+                onChange={(e) => {
+                  setFilter(e.target.value);
+                  setCurrentPage(1);
+                }}
               >
                 {categories.map((cat) => (
                   <option key={cat} value={cat}>
@@ -73,7 +92,7 @@ export default function Home() {
             </div>
 
             <div className="row g-4">
-              {filteredRecipes.map((recipe) => (
+              {paginatedRecipes.map((recipe) => (
                 <Recipe
                   key={recipe.id}
                   id={recipe.id}
@@ -87,9 +106,27 @@ export default function Home() {
                 />
               ))}
 
-              {filteredRecipes.length === 0 && (
-                <div className="alert alert-warning text-center">
-                  Няма намерени рецепти в тази категория.
+              {filteredRecipes.length > 0 && totalPages > 1 && (
+                <div className="d-flex justify-content-center align-items-center gap-3 mt-4">
+                  <button
+                    className="btn btn-outline-warning btn-sm fw-bold"
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                  >
+                    Назад
+                  </button>
+
+                  <span className="badge bg-warning text-dark px-3 py-2 shadow-sm">
+                    Страница {currentPage} от {totalPages}
+                  </span>
+
+                  <button
+                    className="btn btn-outline-warning btn-sm fw-bold"
+                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={currentPage === totalPages}
+                  >
+                    Напред
+                  </button>
                 </div>
               )}
             </div>
