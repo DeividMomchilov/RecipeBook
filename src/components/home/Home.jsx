@@ -30,11 +30,24 @@ export default function Home() {
     if (!term) return filteredRecipes;
 
     return filteredRecipes.filter((r) => {
-      const haystack = [
-        r.title,
-        r.desc,
-        Array.isArray(r.recipe) ? r.recipe.join(" ") : r.recipe,
-      ]
+      const parts = [r.title, r.desc];
+
+      if (r.recipe) {
+        if (Array.isArray(r.recipe)) {
+          parts.push(r.recipe.join(" "));
+        } else if (typeof r.recipe === "string") {
+          parts.push(r.recipe);
+        } else if (typeof r.recipe === "object") {
+          if (Array.isArray(r.recipe.ingredients)) {
+            parts.push(r.recipe.ingredients.join(" "));
+          }
+          if (Array.isArray(r.recipe.steps)) {
+            parts.push(r.recipe.steps.join(" "));
+          }
+        }
+      }
+
+      const haystack = parts
         .filter(Boolean)
         .join(" ")
         .toLowerCase();
