@@ -463,7 +463,7 @@ export const recipesData = [
       id: 20,
       title: "Мекици",
       cat: "Закуски",
-      img: "https://commons.wikimedia.org/wiki/Special:FilePath/Mekitsi.jpg?width=900",
+      img: "https://ezine.bg/files/1200x800/mekici-maq324.webp?width=900",
       desc: "Традиционна българска закуска от пържено тесто, поднесена с пудра захар, сирене или сладко.",
       recipe: {
         ingredients: [
@@ -488,7 +488,7 @@ export const recipesData = [
       id: 21,
       title: "Кьопоолу",
       cat: "Разядки",
-      img: "https://commons.wikimedia.org/wiki/Special:FilePath/Kyopolou.jpg?width=900",
+      img: "https://gotvach.bg/files/1200x800/kiopoolu-chesan.webp?width=900",
       desc: "Вкусна и ароматна разядка от печени патладжани, чушки и чесън.",
       recipe: {
         ingredients: [
@@ -536,7 +536,7 @@ export const recipesData = [
       id: 23,
       title: "Пържени филийки",
       cat: "Закуски",
-      img: "https://commons.wikimedia.org/wiki/Special:FilePath/Gypsy_toast.JPG?width=900",
+      img: "https://matekitchen.com/wp-content/uploads/2022/01/parzheni-filijki-dzhidzhipapa.jpg?width=900",
       desc: "Бърза, лесна и любима закуска от стар хляб, потопен в яйца.",
       recipe: {
         ingredients: [
@@ -559,7 +559,7 @@ export const recipesData = [
       id: 24,
       title: "Пилешка супа",
       cat: "Супи",
-      img: "https://commons.wikimedia.org/wiki/Special:FilePath/Chicken_soup_with_noodles.jpg?width=900",
+      img: "https://www.supichka.com/files/images/1513/fit_1400_933.jpg?width=900",
       desc: "Топла и сгряваща домашна пилешка супа със зеленчуци и фиде.",
       recipe: {
         ingredients: [
@@ -584,7 +584,7 @@ export const recipesData = [
       id: 25,
       title: "Миш-маш",
       cat: "Основни",
-      img: "https://commons.wikimedia.org/wiki/Special:FilePath/Mish-mash.jpg?width=900",
+      img: "https://gotvach.bg/files/1200x800/mishmashselski5.webp?width=900",
       desc: "Традиционно бързо лятно ястие с чушки, домати, яйца и сирене.",
       recipe: {
         ingredients: [
