@@ -1,5 +1,5 @@
 export default function Recipe(props) {
-  const { id, img, title, desc, cat, recipe, isOpen, onToggle } = props;
+  const { id, img, title, desc, cat, recipe, isOpen, onToggle, videoLink } = props;
 
   return (
     <div className="col-md-6">
@@ -19,6 +19,18 @@ export default function Recipe(props) {
         <div className="card-body">
           <h5 className="card-title fw-bold">{title}</h5>
           <p className="card-text text-muted small mb-3">{desc}</p>
+
+          {/* Добавен е текст, target="_blank", rel="noreferrer" и mb-2 за разстояние */}
+          {videoLink && (
+            <a 
+              href={videoLink}
+              target="_blank"
+              rel="noreferrer"
+              className="btn btn-outline-danger btn-sm w-100 fw-bold mb-2"
+            >
+              ▶️ Гледай видео
+            </a>
+          )}
 
           <button
             className="btn btn-outline-warning btn-sm w-100 fw-bold"

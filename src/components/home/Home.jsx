@@ -160,6 +160,7 @@ export default function Home() {
                   recipe={recipe.recipe}
                   isOpen={!!openRecipeById[recipe.id]}
                   onToggle={toggleRecipe}
+                  videoLink={recipe.videoLink}
                 />
               ))}
 
