@@ -35,13 +35,6 @@ export default function Header() {
             >
               🏠 Рецепти
             </Link>
-            <Link 
-              to="/gallery" 
-              className={`btn rounded-pill px-4 ${isActive('/gallery')}`}
-              onClick={() => setIsMenuOpen(false)}
-            >
-              🎥 AI Галерия
-            </Link>
           </div>
         </div>
       </div>
