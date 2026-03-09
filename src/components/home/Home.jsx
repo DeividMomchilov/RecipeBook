@@ -1,9 +1,10 @@
-import { useMemo, useState } from "react";
-import Header from '../../components/header/Header';
-import Footer from '../footer/Footer';
+import { useMemo, useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Header from "../../components/header/Header";
+import Footer from "../footer/Footer";
 import { recipesData } from "../../data/recipesData";
-import Recipe from '../receipe/Receipe';
-import { categoryIcons } from '../../constants/categoryIcons';
+import Recipe from "../receipe/Receipe";
+import { categoryIcons } from "../../constants/categoryIcons";
 
 const STICKY_TOP_OFFSET = "100px";
 
@@ -11,19 +12,37 @@ export default function Home() {
   const [filter, setFilter] = useState("Всички");
   const [openRecipeById, setOpenRecipeById] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
+  const [activeVideo, setActiveVideo] = useState(null);
+
+  // 1. Любими рецепти с localStorage
+  const [favorites, setFavorites] = useState(() => {
+    const saved = localStorage.getItem("favoriteRecipes");
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem("favoriteRecipes", JSON.stringify(favorites));
+  }, [favorites]);
 
   const PAGE_SIZE = 10;
   const [currentPage, setCurrentPage] = useState(1);
 
-  const toggleRecipe = (id) => {
-    setOpenRecipeById((prev) => ({ ...prev, [id]: !prev[id] }));
+  const toggleRecipe = (id) => setOpenRecipeById((prev) => ({ ...prev, [id]: !prev[id] }));
+  
+  const toggleFavorite = (id) => {
+    setFavorites((prev) => 
+      prev.includes(id) ? prev.filter((fid) => fid !== id) : [...prev, id]
+    );
   };
 
   const filteredRecipes = useMemo(() => {
+    if (filter === "Любими") {
+      return recipesData.filter((r) => favorites.includes(r.id));
+    }
     return filter === "Всички"
       ? recipesData
       : recipesData.filter((r) => r.cat === filter);
-  }, [filter]);
+  }, [filter, favorites]);
 
   const searchedRecipes = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
@@ -31,48 +50,35 @@ export default function Home() {
 
     return filteredRecipes.filter((r) => {
       const parts = [r.title, r.desc];
-
       if (r.recipe) {
-        if (Array.isArray(r.recipe)) {
-          parts.push(r.recipe.join(" "));
-        } else if (typeof r.recipe === "string") {
-          parts.push(r.recipe);
-        } else if (typeof r.recipe === "object") {
-          if (Array.isArray(r.recipe.ingredients)) {
-            parts.push(r.recipe.ingredients.join(" "));
-          }
-          if (Array.isArray(r.recipe.steps)) {
-            parts.push(r.recipe.steps.join(" "));
-          }
-        }
+        if (Array.isArray(r.recipe.ingredients)) parts.push(r.recipe.ingredients.join(" "));
+        if (Array.isArray(r.recipe.steps)) parts.push(r.recipe.steps.join(" "));
       }
-
-      const haystack = parts
-        .filter(Boolean)
-        .join(" ")
-        .toLowerCase();
-
-      return haystack.includes(term);
+      return parts.filter(Boolean).join(" ").toLowerCase().includes(term);
     });
   }, [filteredRecipes, searchTerm]);
 
-  const totalPages = useMemo(() => {
-    return Math.max(1, Math.ceil(searchedRecipes.length / PAGE_SIZE));
-  }, [searchedRecipes]);
+  const totalPages = useMemo(() => Math.max(1, Math.ceil(searchedRecipes.length / PAGE_SIZE)), [searchedRecipes]);
 
   const categories = useMemo(() => {
     const unique = Array.from(new Set(recipesData.map((r) => r.cat)));
-    return ["Всички", ...unique];
+    return ["Всички", "Любими", ...unique]; // Добавихме Любими като филтър
   }, []);
 
   const paginatedRecipes = useMemo(() => {
     const start = (currentPage - 1) * PAGE_SIZE;
-    const end = start + PAGE_SIZE;
-    return searchedRecipes.slice(start, end);
+    return searchedRecipes.slice(start, start + PAGE_SIZE);
   }, [searchedRecipes, currentPage]);
 
+  // Функция за извличане на YouTube ID от линка
+  const getYouTubeId = (url) => {
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url?.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
+  };
+
   return (
-    <div className="bg-light min-vh-100 d-flex flex-column">
+    <div className="bg-light min-vh-100 d-flex flex-column position-relative">
       <Header />
 
       <div className="container my-5 flex-grow-1">
@@ -94,7 +100,7 @@ export default function Home() {
                       setCurrentPage(1);
                     }}
                   >
-                    {categoryIcons[cat] ?? "🍽️"} {cat}
+                    {cat === "Любими" ? "❤️" : categoryIcons[cat] ?? "🍽️"} {cat}
                   </button>
                 ))}
               </div>
@@ -117,16 +123,14 @@ export default function Home() {
               >
                 {categories.map((cat) => (
                   <option key={cat} value={cat}>
-                    {categoryIcons[cat] ?? "🍽️"} {cat}
+                    {cat === "Любими" ? "❤️" : categoryIcons[cat] ?? "🍽️"} {cat}
                   </option>
                 ))}
               </select>
             </div>
 
             <div className="input-group mb-4 shadow-sm">
-              <span className="input-group-text bg-white border-warning text-muted">
-                🔍
-              </span>
+              <span className="input-group-text bg-white border-warning text-muted">🔍</span>
               <input
                 type="text"
                 className="form-control border-warning"
@@ -139,58 +143,55 @@ export default function Home() {
               />
             </div>
 
-            <div className="row g-4">
+            <motion.div layout className="row g-4">
               {searchedRecipes.length === 0 && (
                 <div className="col-12">
                   <div className="alert alert-warning mb-0" role="alert">
                     Не са намерени рецепти по зададените критерии.
-                    Опитайте с друга ключова дума или категория.
                   </div>
                 </div>
               )}
 
-              {paginatedRecipes.map((recipe) => (
-                <Recipe
-                  key={recipe.id}
-                  id={recipe.id}
-                  img={recipe.img}
-                  title={recipe.title}
-                  desc={recipe.desc}
-                  cat={recipe.cat}
-                  recipe={recipe.recipe}
-                  isOpen={!!openRecipeById[recipe.id]}
-                  onToggle={toggleRecipe}
-                  videoLink={recipe.videoLink}
-                />
-              ))}
+              <AnimatePresence mode="popLayout">
+                {paginatedRecipes.map((recipe) => (
+                  <Recipe
+                    key={recipe.id}
+                    {...recipe}
+                    isOpen={!!openRecipeById[recipe.id]}
+                    onToggle={toggleRecipe}
+                    onPlayVideo={setActiveVideo}
+                    isFavorite={favorites.includes(recipe.id)}
+                    onToggleFavorite={toggleFavorite}
+                  />
+                ))}
+              </AnimatePresence>
+            </motion.div>
 
-              {searchedRecipes.length > 0 && totalPages > 1 && (
-                <div className="d-flex justify-content-center align-items-center gap-3 mt-4">
-                  <button
-                    className="btn btn-outline-warning btn-sm fw-bold"
-                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                    disabled={currentPage === 1}
-                  >
-                    Назад
-                  </button>
-
-                  <span className="badge bg-warning text-dark px-3 py-2 shadow-sm">
-                    Страница {currentPage} от {totalPages}
-                  </span>
-
-                  <button
-                    className="btn btn-outline-warning btn-sm fw-bold"
-                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                    disabled={currentPage === totalPages}
-                  >
-                    Напред
-                  </button>
-                </div>
-              )}
-            </div>
+            {searchedRecipes.length > 0 && totalPages > 1 && (
+              <div className="d-flex justify-content-center align-items-center gap-3 mt-4">
+                <button
+                  className="btn btn-outline-warning btn-sm fw-bold"
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                >
+                  Назад
+                </button>
+                <span className="badge bg-warning text-dark px-3 py-2 shadow-sm">
+                  Страница {currentPage} от {totalPages}
+                </span>
+                <button
+                  className="btn btn-outline-warning btn-sm fw-bold"
+                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                >
+                  Напред
+                </button>
+              </div>
+            )}
           </main>
 
           <aside className="col-xl-3 d-none d-xl-block">
+            {/* Сайдар екстри */}
             <div className="position-sticky" style={{ top: STICKY_TOP_OFFSET }}>
               <div className="card shadow border-0 rounded-4 mb-4 bg-primary bg-opacity-10">
                 <div className="card-body">
@@ -200,30 +201,51 @@ export default function Home() {
                   </p>
                 </div>
               </div>
-
-              <div className="card shadow border-0 rounded-4 overflow-hidden">
-                <div className="card-header bg-white fw-bold py-3 border-bottom-0">
-                  🏆 Топ Продукт
-                </div>
-                <img
-                  src="https://commons.wikimedia.org/wiki/Special:FilePath/Scharene%20sol%20IMG%200008.JPG?width=900"
-                  className="card-img-top"
-                  alt="Шарена сол"
-                />
-
-                <div className="card-body">
-                  <h6 className="fw-bold">Шарена Сол</h6>
-                  <p className="small text-muted mb-0">
-                    Незаменимата подправка за всяка българска трапеза.
-                  </p>
-                </div>
-              </div>
             </div>
           </aside>
         </div>
       </div>
 
       <Footer />
+
+      {/* 2. Модал за Видео Плеър */}
+      <AnimatePresence>
+        {activeVideo && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center"
+            style={{ backgroundColor: "rgba(0,0,0,0.85)", zIndex: 1050 }}
+            onClick={() => setActiveVideo(null)} // Затваряне при клик отвън
+          >
+            <motion.div
+              initial={{ scale: 0.8, y: 50 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.8, y: 50 }}
+              className="bg-dark rounded-4 p-2 position-relative w-100 mx-3 shadow-lg"
+              style={{ maxWidth: "800px" }}
+              onClick={(e) => e.stopPropagation()} // Предотвратява затваряне при клик върху самото видео
+            >
+              <button
+                className="btn btn-light rounded-circle position-absolute d-flex justify-content-center align-items-center"
+                style={{ top: "-15px", right: "-15px", zIndex: 1060, width: "35px", height: "35px" }}
+                onClick={() => setActiveVideo(null)}
+              >
+                ✖
+              </button>
+              <div className="ratio ratio-16x9 rounded-3 overflow-hidden">
+                <iframe
+                  src={`https://www.youtube.com/embed/${getYouTubeId(activeVideo)}?autoplay=1`}
+                  title="YouTube video player"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
