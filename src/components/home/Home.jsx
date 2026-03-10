@@ -78,7 +78,7 @@ export default function Home() {
   };
 
   return (
-    <div className="bg-light min-vh-100 d-flex flex-column position-relative">
+    <div className="bg-body-tertiary min-vh-100 d-flex flex-column position-relative">
       <Header />
 
       <div className="container my-5 flex-grow-1">
@@ -108,7 +108,7 @@ export default function Home() {
           </aside>
 
           <main className="col-12 col-xl-6">
-            <h2 className="mb-4 text-dark border-start border-5 border-warning ps-3">
+            <h2 className="mb-4 text-body border-start border-5 border-warning ps-3">
               {filter === "Всички" ? "Всички Рецепти" : `Категория: ${filter}`}
             </h2>
 
@@ -130,7 +130,7 @@ export default function Home() {
             </div>
 
             <div className="input-group mb-4 shadow-sm">
-              <span className="input-group-text bg-white border-warning text-muted">🔍</span>
+            <span className="input-group-text bg-body border-warning text-body">🔍</span>
               <input
                 type="text"
                 className="form-control border-warning"
@@ -191,16 +191,64 @@ export default function Home() {
           </main>
 
           <aside className="col-xl-3 d-none d-xl-block">
-            {/* Сайдар екстри */}
             <div className="position-sticky" style={{ top: STICKY_TOP_OFFSET }}>
+              
+              {/* 1. Съвет на деня */}
               <div className="card shadow border-0 rounded-4 mb-4 bg-primary bg-opacity-10">
                 <div className="card-body">
                   <h5 className="card-title text-primary fw-bold">💡 Съвет на деня</h5>
-                  <p className="card-text small text-dark mb-0">
+                  <p className="card-text small mb-0" style={{ color: "var(--bs-body-color)" }}>
                     Винаги добавяйте щипка захар към доматения сос, за да неутрализирате киселината.
                   </p>
                 </div>
               </div>
+
+              {/* 2. Абонамент за Бюлетин */}
+              <div className="card shadow border-0 rounded-4 mb-4 text-center overflow-hidden">
+                <div className="bg-warning p-3">
+                  <h6 className="fw-bold text-dark mb-0">💌 Кулинарен бюлетин</h6>
+                </div>
+                <div className="card-body">
+                  <p className="small text-muted mb-3">
+                    Получавайте най-новите рецепти и тайни от кухнята директно във вашия имейл!
+                  </p>
+                  <div className="input-group input-group-sm mb-2">
+                    <input type="email" className="form-control" placeholder="Вашият имейл..." />
+                  </div>
+                  <button className="btn btn-dark btn-sm w-100 fw-bold">Абонирай се</button>
+                </div>
+              </div>
+
+              {/* 3. Рецепта на седмицата */}
+              <div className="card shadow border-0 rounded-4 overflow-hidden">
+              <div className="card-header bg-body fw-bold py-3 border-bottom-0">
+                  ⭐ Рецепта на седмицата
+                </div>
+                <img
+                  src="https://commons.wikimedia.org/wiki/Special:FilePath/Banitsa_and_yogurt.jpg?width=900"
+                  className="card-img-top object-fit-cover"
+                  alt="Баница"
+                  style={{ height: "160px" }}
+                />
+                <div className="card-body">
+                  <h6 className="fw-bold">Домашна Баница</h6>
+                  <p className="small text-muted mb-3">
+                    Перфектната уикенд закуска, приготвена с много любов и сирене.
+                  </p>
+                  <button 
+                    className="btn btn-outline-warning btn-sm w-100 fw-bold"
+                    onClick={() => {
+                      // Тази логика ще филтрира директно до рецептата!
+                      setFilter("Всички");
+                      setSearchTerm("Баница");
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
+                  >
+                    Виж рецептата
+                  </button>
+                </div>
+              </div>
+
             </div>
           </aside>
         </div>
