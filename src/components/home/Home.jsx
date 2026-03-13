@@ -1,74 +1,27 @@
-import { useMemo, useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Header from "../../components/header/Header";
 import Footer from "../footer/Footer";
-import { recipesData } from "../../data/recipesData";
 import Recipe from "../receipe/Receipe";
 import { categoryIcons } from "../../constants/categoryIcons";
+import { useFavorites } from "../../hooks/useFavorites";
+import { useRecipes } from "../../hooks/useRecipes";
 
 const STICKY_TOP_OFFSET = "100px";
 
 export default function Home() {
-  const [filter, setFilter] = useState("Всички");
-  const [openRecipeById, setOpenRecipeById] = useState({});
-  const [searchTerm, setSearchTerm] = useState("");
-  const [activeVideo, setActiveVideo] = useState(null);
-
-  const [favorites, setFavorites] = useState(() => {
-    const saved = localStorage.getItem("favoriteRecipes");
-    return saved ? JSON.parse(saved) : [];
-  });
-
-  useEffect(() => {
-    localStorage.setItem("favoriteRecipes", JSON.stringify(favorites));
-  }, [favorites]);
-
-  const PAGE_SIZE = 10;
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const toggleRecipe = (id) => setOpenRecipeById((prev) => ({ ...prev, [id]: !prev[id] }));
+  const { favorites, toggleFavorite } = useFavorites();
   
-  const toggleFavorite = (id) => {
-    setFavorites((prev) => 
-      prev.includes(id) ? prev.filter((fid) => fid !== id) : [...prev, id]
-    );
-  };
+  const {
+    filter, setFilter,
+    searchTerm, setSearchTerm,
+    currentPage, setCurrentPage,
+    totalPages, categories,
+    paginatedRecipes, searchedRecipesCount,
+    openRecipeById, toggleRecipe
+  } = useRecipes(favorites);
 
-  const filteredRecipes = useMemo(() => {
-    if (filter === "Любими") {
-      return recipesData.filter((r) => favorites.includes(r.id));
-    }
-    return filter === "Всички"
-      ? recipesData
-      : recipesData.filter((r) => r.cat === filter);
-  }, [filter, favorites]);
-
-  const searchedRecipes = useMemo(() => {
-    const term = searchTerm.trim().toLowerCase();
-    if (!term) return filteredRecipes;
-
-    return filteredRecipes.filter((r) => {
-      const parts = [r.title, r.desc];
-      if (r.recipe) {
-        if (Array.isArray(r.recipe.ingredients)) parts.push(r.recipe.ingredients.join(" "));
-        if (Array.isArray(r.recipe.steps)) parts.push(r.recipe.steps.join(" "));
-      }
-      return parts.filter(Boolean).join(" ").toLowerCase().includes(term);
-    });
-  }, [filteredRecipes, searchTerm]);
-
-  const totalPages = useMemo(() => Math.max(1, Math.ceil(searchedRecipes.length / PAGE_SIZE)), [searchedRecipes]);
-
-  const categories = useMemo(() => {
-    const unique = Array.from(new Set(recipesData.map((r) => r.cat)));
-    return ["Всички", "Любими", ...unique]; 
-  }, []);
-
-  const paginatedRecipes = useMemo(() => {
-    const start = (currentPage - 1) * PAGE_SIZE;
-    return searchedRecipes.slice(start, start + PAGE_SIZE);
-  }, [searchedRecipes, currentPage]);
-
+  const [activeVideo, setActiveVideo] = useState(null);
 
   const getYouTubeId = (url) => {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
@@ -94,10 +47,7 @@ export default function Home() {
                     className={`list-group-item list-group-item-action py-3 ${
                       filter === cat ? "active bg-warning text-dark border-warning fw-bold" : ""
                     }`}
-                    onClick={() => {
-                      setFilter(cat);
-                      setCurrentPage(1);
-                    }}
+                    onClick={() => setFilter(cat)}
                   >
                     {cat === "Любими" ? "❤️" : categoryIcons[cat] ?? "🍽️"} {cat}
                   </button>
@@ -115,10 +65,7 @@ export default function Home() {
               <select
                 className="form-select shadow-sm"
                 value={filter}
-                onChange={(e) => {
-                  setFilter(e.target.value);
-                  setCurrentPage(1);
-                }}
+                onChange={(e) => setFilter(e.target.value)}
               >
                 {categories.map((cat) => (
                   <option key={cat} value={cat}>
@@ -129,21 +76,18 @@ export default function Home() {
             </div>
 
             <div className="input-group mb-4 shadow-sm">
-            <span className="input-group-text bg-body border-warning text-body">🔍</span>
+              <span className="input-group-text bg-body border-warning text-body">🔍</span>
               <input
                 type="text"
                 className="form-control border-warning"
                 placeholder="Търси рецепта по име, описание или съдържание..."
                 value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setCurrentPage(1);
-                }}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
 
             <motion.div layout className="row g-4">
-              {searchedRecipes.length === 0 && (
+              {searchedRecipesCount === 0 && (
                 <div className="col-12">
                   <div className="alert alert-warning mb-0" role="alert">
                     Не са намерени рецепти по зададените критерии.
@@ -166,7 +110,7 @@ export default function Home() {
               </AnimatePresence>
             </motion.div>
 
-            {searchedRecipes.length > 0 && totalPages > 1 && (
+            {searchedRecipesCount > 0 && totalPages > 1 && (
               <div className="d-flex justify-content-center align-items-center gap-3 mt-4">
                 <button
                   className="btn btn-outline-warning btn-sm fw-bold"
@@ -192,7 +136,6 @@ export default function Home() {
           <aside className="col-xl-3 d-none d-xl-block">
             <div className="position-sticky" style={{ top: STICKY_TOP_OFFSET }}>
               
-              {/* 1. Съвет на деня */}
               <div className="card shadow border-0 rounded-4 mb-4 bg-primary bg-opacity-10">
                 <div className="card-body">
                   <h5 className="card-title text-primary fw-bold">💡 Съвет на деня</h5>
@@ -202,8 +145,23 @@ export default function Home() {
                 </div>
               </div>
 
+              <div className="card shadow border-0 rounded-4 mb-4 text-center overflow-hidden">
+                <div className="bg-warning p-3">
+                  <h6 className="fw-bold text-dark mb-0">💌 Кулинарен бюлетин</h6>
+                </div>
+                <div className="card-body">
+                  <p className="small text-muted mb-3">
+                    Получавайте най-новите рецепти и тайни от кухнята директно във вашия имейл!
+                  </p>
+                  <div className="input-group input-group-sm mb-2">
+                    <input type="email" className="form-control" placeholder="Вашият имейл..." />
+                  </div>
+                  <button className="btn btn-dark btn-sm w-100 fw-bold">Абонирай се</button>
+                </div>
+              </div>
+
               <div className="card shadow border-0 rounded-4 overflow-hidden">
-              <div className="card-header bg-body fw-bold py-3 border-bottom-0">
+                <div className="card-header bg-body fw-bold py-3 border-bottom-0">
                   ⭐ Рецепта на седмицата
                 </div>
                 <img
@@ -237,7 +195,6 @@ export default function Home() {
 
       <Footer />
 
-      {/* 2. Модал за Видео Плеър */}
       <AnimatePresence>
         {activeVideo && (
           <motion.div
@@ -246,7 +203,7 @@ export default function Home() {
             exit={{ opacity: 0 }}
             className="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center"
             style={{ backgroundColor: "rgba(0,0,0,0.85)", zIndex: 1050 }}
-            onClick={() => setActiveVideo(null)} // Затваряне при клик отвън
+            onClick={() => setActiveVideo(null)}
           >
             <motion.div
               initial={{ scale: 0.8, y: 50 }}
@@ -254,7 +211,7 @@ export default function Home() {
               exit={{ scale: 0.8, y: 50 }}
               className="bg-dark rounded-4 p-2 position-relative w-100 mx-3 shadow-lg"
               style={{ maxWidth: "800px" }}
-              onClick={(e) => e.stopPropagation()} // Предотвратява затваряне при клик върху самото видео
+              onClick={(e) => e.stopPropagation()}
             >
               <button
                 className="btn btn-light rounded-circle position-absolute d-flex justify-content-center align-items-center"
