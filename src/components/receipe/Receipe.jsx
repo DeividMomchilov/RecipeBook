@@ -23,12 +23,10 @@ export default function Recipe(props) {
             alt={title}
             style={{ height: "200px" }}
           />
-          {/* Категорията остава warning с тъмен текст, за да се чете */}
           <span className="position-absolute top-0 end-0 badge bg-warning text-dark m-2 shadow-sm">
             {cat}
           </span>
           
-          {/* Бутон за Любими - направихме го адаптивен с bg-body */}
           <button
             className="position-absolute top-0 start-0 m-2 rounded-circle shadow p-2 d-flex align-items-center justify-content-center border-0 bg-body"
             onClick={() => onToggleFavorite(id)}
@@ -41,7 +39,6 @@ export default function Recipe(props) {
 
         <div className="card-body d-flex flex-column">
           <h5 className="card-title fw-bold">{title}</h5>
-          {/* text-muted се адаптира идеално и в двете теми */}
           <p className="card-text text-muted small mb-3 flex-grow-1">{desc}</p>
 
           {videoLink && (
@@ -70,7 +67,6 @@ export default function Recipe(props) {
                 transition={{ duration: 0.3 }}
                 className="overflow-hidden"
               >
-                {/* Сменихме bg-light с bg-body-tertiary */}
                 <div className="mt-3 p-3 bg-body-tertiary rounded-3 border">
                   <div className="mb-2 fw-bold">🧾 Съставки:</div>
                   <ul className="small mb-3">
