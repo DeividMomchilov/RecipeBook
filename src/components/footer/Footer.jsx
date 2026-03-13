@@ -1,16 +1,15 @@
 import { motion } from "framer-motion";
 
 export default function Footer() {
-  const currentYear = new Date().getFullYear(); // Автоматично взима текущата година
+  const currentYear = new Date().getFullYear(); 
 
   return (
     <footer 
       className="bg-dark text-white py-4 mt-auto shadow-lg"
-      style={{ borderTop: "4px solid #ffc107" }} // Жълта линия, огледална на тази в Header-а
+      style={{ borderTop: "4px solid #ffc107" }} 
     >
       <div className="container d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
         
-        {/* Лява част - Бранд и мото */}
         <div className="text-center text-md-start">
           <h5 className="text-warning fw-bold mb-1 d-flex align-items-center justify-content-center justify-content-md-start gap-2">
             <img 
@@ -27,7 +26,6 @@ export default function Footer() {
           </p>
         </div>
 
-        {/* Дясна част - Иконки / Линкове (Опционално) */}
         <div className="d-flex gap-3">
           <motion.a 
             href="#" 
