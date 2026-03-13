@@ -14,7 +14,6 @@ export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeVideo, setActiveVideo] = useState(null);
 
-  // 1. Любими рецепти с localStorage
   const [favorites, setFavorites] = useState(() => {
     const saved = localStorage.getItem("favoriteRecipes");
     return saved ? JSON.parse(saved) : [];
@@ -62,7 +61,7 @@ export default function Home() {
 
   const categories = useMemo(() => {
     const unique = Array.from(new Set(recipesData.map((r) => r.cat)));
-    return ["Всички", "Любими", ...unique]; // Добавихме Любими като филтър
+    return ["Всички", "Любими", ...unique]; 
   }, []);
 
   const paginatedRecipes = useMemo(() => {
@@ -70,7 +69,7 @@ export default function Home() {
     return searchedRecipes.slice(start, start + PAGE_SIZE);
   }, [searchedRecipes, currentPage]);
 
-  // Функция за извличане на YouTube ID от линка
+
   const getYouTubeId = (url) => {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
     const match = url?.match(regExp);
@@ -203,23 +202,6 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* 2. Абонамент за Бюлетин */}
-              <div className="card shadow border-0 rounded-4 mb-4 text-center overflow-hidden">
-                <div className="bg-warning p-3">
-                  <h6 className="fw-bold text-dark mb-0">💌 Кулинарен бюлетин</h6>
-                </div>
-                <div className="card-body">
-                  <p className="small text-muted mb-3">
-                    Получавайте най-новите рецепти и тайни от кухнята директно във вашия имейл!
-                  </p>
-                  <div className="input-group input-group-sm mb-2">
-                    <input type="email" className="form-control" placeholder="Вашият имейл..." />
-                  </div>
-                  <button className="btn btn-dark btn-sm w-100 fw-bold">Абонирай се</button>
-                </div>
-              </div>
-
-              {/* 3. Рецепта на седмицата */}
               <div className="card shadow border-0 rounded-4 overflow-hidden">
               <div className="card-header bg-body fw-bold py-3 border-bottom-0">
                   ⭐ Рецепта на седмицата
@@ -238,7 +220,6 @@ export default function Home() {
                   <button 
                     className="btn btn-outline-warning btn-sm w-100 fw-bold"
                     onClick={() => {
-                      // Тази логика ще филтрира директно до рецептата!
                       setFilter("Всички");
                       setSearchTerm("Баница");
                       window.scrollTo({ top: 0, behavior: "smooth" });
