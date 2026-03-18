@@ -143,22 +143,7 @@ export default function Home() {
                     Винаги добавяйте щипка захар към доматения сос, за да неутрализирате киселината.
                   </p>
                 </div>
-              </div>
-
-              <div className="card shadow border-0 rounded-4 mb-4 text-center overflow-hidden">
-                <div className="bg-warning p-3">
-                  <h6 className="fw-bold text-dark mb-0">💌 Кулинарен бюлетин</h6>
-                </div>
-                <div className="card-body">
-                  <p className="small text-muted mb-3">
-                    Получавайте най-новите рецепти и тайни от кухнята директно във вашия имейл!
-                  </p>
-                  <div className="input-group input-group-sm mb-2">
-                    <input type="email" className="form-control" placeholder="Вашият имейл..." />
-                  </div>
-                  <button className="btn btn-dark btn-sm w-100 fw-bold">Абонирай се</button>
-                </div>
-              </div>
+              </div>        
 
               <div className="card shadow border-0 rounded-4 overflow-hidden">
                 <div className="card-header bg-body fw-bold py-3 border-bottom-0">
