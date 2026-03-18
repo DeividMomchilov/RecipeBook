@@ -7,8 +7,10 @@ export default function Recipe(props) {
     videoLink, onPlayVideo, isFavorite, onToggleFavorite 
   } = props;
 
+  const MotionDiv = motion.div;
+
   return (
-    <motion.div
+    <MotionDiv
       layout
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
@@ -30,7 +32,7 @@ export default function Recipe(props) {
           
           <button
             className="position-absolute top-0 start-0 m-2 rounded-circle shadow p-2 d-flex align-items-center justify-content-center border-0 bg-body"
-            onClick={() => onToggleFavorite(id)}
+            onClick={() => onToggleFavorite(id)} 
             style={{ width: "40px", height: "40px", zIndex: 10, opacity: 0.9 }}
             title="Добави в любими"
           >
@@ -59,6 +61,6 @@ export default function Recipe(props) {
           )}
         </div>
       </div>
-    </motion.div>
+    </MotionDiv>
   );
 }

@@ -1,17 +1,17 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import Header from "../../components/header/Header";
 import Footer from "../footer/Footer";
 import Recipe from "../receipe/Receipe";
 import { categoryIcons } from "../../constants/categoryIcons";
 import { useFavorites } from "../../hooks/useFavorites";
 import { useRecipes } from "../../hooks/useRecipes";
-
+import {motion} from "framer-motion";
 const STICKY_TOP_OFFSET = "100px";
 
 export default function Home() {
   const { favorites, toggleFavorite } = useFavorites();
-  
+
   const {
     filter, setFilter,
     searchTerm, setSearchTerm,

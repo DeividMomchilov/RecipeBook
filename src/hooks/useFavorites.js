@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 
 export function useFavorites(storageKey = "favoriteRecipes") {
   const [favorites, setFavorites] = useState(() => {
@@ -11,9 +12,18 @@ export function useFavorites(storageKey = "favoriteRecipes") {
   }, [favorites, storageKey]);
 
   const toggleFavorite = (id) => {
-    setFavorites((prev) =>
-      prev.includes(id) ? prev.filter((fid) => fid !== id) : [...prev, id]
-    );
+    setFavorites((prev) => {
+      const isAlreadyFavorite = prev.includes(id);
+
+      if (isAlreadyFavorite) {
+        toast.info("Рецептата е премахната от любими! 🤍");
+        return prev.filter((fid) => fid !== id);
+      } 
+      else {
+        toast.success("Успешно добавено в любими! ❤️");
+        return [...prev, id];
+      }
+    });
   };
 
   return { favorites, toggleFavorite };
