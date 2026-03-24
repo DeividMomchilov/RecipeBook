@@ -53,7 +53,7 @@ A modern Bulgarian recipe book web application built with **React (Vite)** and *
 - **npm** (v7 or higher) or **yarn**
 
 ### Installation and run
-
+```bash
 git clone https://github.com/DeividMomchilov/RecipeBook.git
 cd RecipeBook
 npm install
