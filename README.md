@@ -1,60 +1,48 @@
-# RecipeBook 🇧🇬 (React + Bootstrap)
+# 👨‍🍳 RecipeBook (Вкусни Рецепти)
 
-A modern Bulgarian recipe book web application built with **React (Vite)** and **Bootstrap 5**. Browse traditional Bulgarian dishes organized by categories, view detailed recipe instructions, and explore a curated video gallery featuring YouTube recipe tutorials.
+A modern, fast, and interactive Single Page Application (SPA) built with React that showcases traditional Bulgarian recipes. This project demonstrates modern frontend development practices, including custom hooks, routing, state management (with `localStorage`), and advanced UI animations.
 
----
+![RecipeBook Preview](public/cookbook.png) ## ✨ Features
 
-## ✨ Features
+- 🌗 **Dark/Light Mode**: Full theme support utilizing Bootstrap 5.3's `data-bs-theme`, with user preference saved in `localStorage`.
+- ❤️ **Favorites System**: Users can save their favorite recipes. The state persists across sessions using a custom `useFavorites` hook.
+- 🔀 **Dynamic Routing**: Built with `react-router-dom` for seamless navigation between the Home page and dedicated Recipe Details pages (`/recipe/:id`).
+- 🎥 **Integrated Video Player**: Watch YouTube recipe tutorials directly within a sleek, animated modal on the home page.
+- 🖨️ **Print-Ready Pages**: The Recipe Details page features a custom `@media print` CSS layout, stripping away unnecessary UI elements for perfect physical printing.
+- ✨ **Smooth Animations**: Powered by `framer-motion` for fluid page transitions, layout changes, and hover effects.
+- 🍞 **Toast Notifications**: Real-time user feedback when adding or removing favorites using `react-toastify`.
+- 🔍 **Advanced Search & Filtering**: Instantly search through titles, descriptions, ingredients, and preparation steps, or filter by category. Includes pagination.
+- 📱 **Fully Responsive**: Mobile-first design using Bootstrap Grid.
 
-### 📚 Recipe Management
-- ✅ **Recipe Catalog** - Comprehensive collection of traditional Bulgarian dishes
-- ✅ **Expandable Recipe Cards** - View/hide ingredients and cooking steps on demand
-- ✅ **Category Filtering** - Organize recipes by cuisine type (desktop sidebar + mobile dropdown)
-- ✅ **Responsive Design** - Seamless experience across all device sizes using Bootstrap grid
-- 
-### 🎬 Video Gallery
-- 🤖 **AI-Generated Videos** - AI-created cooking demonstrations
-- ▶️ **YouTube Videos** - Curated recipe video tutorials from YouTube
-- 📱 **Responsive Video Player** - Optimized for desktop and mobile viewing
+## 🛠️ Tech Stack
 
-### 💻 User Experience
-- ✅ **Mobile-First Design** - Mobile dropdown for categories
-- ✅ **Desktop Sidebar** - Dedicated sidebar navigation on larger screens
-- ✅ **Fast Performance** - Vite-powered blazing-fast development and builds
-- ✅ **Dark/Light theme** - Switch your prefered theme
-- 
----
+- **Framework**: [React 18](https://react.dev/) (Bootstrapped with [Vite](https://vitejs.dev/))
+- **Styling & UI**: [Bootstrap 5.3](https://getbootstrap.com/)
+- **Routing**: [React Router v6](https://reactrouter.com/)
+- **Animations**: [Framer Motion](https://www.framer.com/motion/)
+- **Notifications**: [React Toastify](https://fkhadra.github.io/react-toastify/)
 
-## 🧰 Tech Stack
+## 📂 Project Structure
 
-### Frontend Framework
-- **React 19.2.0** - UI library with modern hooks
-- **React Router 7.11.0** - Client-side routing
-- **React DOM 19.2.0** - DOM rendering
+The codebase is organized following React best practices (Separation of Concerns):
 
-### Build & Development
-- **Vite 7.2.4** - Next-generation frontend build tool
-- **@vitejs/plugin-react 5.1.1** - React support for Vite
+```text
+src/
+├── components/          # Reusable UI components
+│   ├── footer/          # App footer
+│   ├── header/          # Navigation and theme toggle
+│   ├── home/            # Main dashboard, search, and sidebar
+│   ├── receipe/         # Recipe card component
+│   └── recipe-details/  # Dedicated page for a single recipe
+├── constants/           # Static assets (e.g., category icons)
+├── data/                # Hardcoded recipe data and video links
+├── hooks/               # Custom React hooks
+│   ├── useFavorites.js  # Logic for localStorage favorites
+│   └── useRecipes.js    # Logic for filtering, searching, and pagination
+├── App.jsx              # Main router and ToastContainer setup
+└── main.jsx             # React entry point
 
-### Styling & UI
-- **Bootstrap 5.3.8** - Responsive CSS framework
-
-### Development Tools
-- **ESLint 9.39.1** - JavaScript code quality
-- **eslint-plugin-react-hooks** - React hooks best practices
-- **eslint-plugin-react-refresh** - React refresh integration
-
----
-
-## 📦 Getting Started
-
-### Prerequisites
-- **Node.js** (v16 or higher)
-- **npm** (v7 or higher) or **yarn**
-
-### Installation and run
-```bash
-git clone https://github.com/DeividMomchilov/RecipeBook.git
-cd RecipeBook
+git clone [https://github.com/your-username/recipebook.git](https://github.com/your-username/recipebook.git)
+cd recipebook
 npm install
-npm run build
+npm run dev
