@@ -41,7 +41,8 @@ src/
 │   └── useRecipes.js    # Logic for filtering, searching, and pagination
 ├── App.jsx              # Main router and ToastContainer setup
 └── main.jsx             # React entry point
-
+```
+```bash
 git clone [https://github.com/your-username/recipebook.git](https://github.com/your-username/recipebook.git)
 cd recipebook
 npm install
