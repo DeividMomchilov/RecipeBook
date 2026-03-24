@@ -42,6 +42,8 @@ src/
 ├── App.jsx              # Main router and ToastContainer setup
 └── main.jsx             # React entry point
 ```
+
+## Instalation and build
 ```bash
 git clone [https://github.com/your-username/recipebook.git](https://github.com/your-username/recipebook.git)
 cd recipebook
