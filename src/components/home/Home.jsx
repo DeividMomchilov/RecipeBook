@@ -1,16 +1,19 @@
-import { useState } from "react";
+import { useState, useEffect } from "react"; // Added useEffect
 import { AnimatePresence } from "framer-motion";
 import Header from "../../components/header/Header";
 import Footer from "../footer/Footer";
 import Recipe from "../receipe/Receipe";
+import RecipeSkeleton from "../recipe-skeleton/RecipeSkeleton";
 import { categoryIcons } from "../../constants/categoryIcons";
 import { useFavorites } from "../../hooks/useFavorites";
 import { useRecipes } from "../../hooks/useRecipes";
-import {motion} from "framer-motion";
+import { motion } from "framer-motion";
+
 const STICKY_TOP_OFFSET = "100px";
 
 export default function Home() {
   const { favorites, toggleFavorite } = useFavorites();
+  const [isLoading, setIsLoading] = useState(true); // Manage loading state
 
   const {
     filter, setFilter,
@@ -22,6 +25,14 @@ export default function Home() {
   } = useRecipes(favorites);
 
   const [activeVideo, setActiveVideo] = useState(null);
+
+  useEffect(() => {
+    setIsLoading(true);
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 300); 
+    return () => clearTimeout(timer);
+  }, [filter, searchTerm, currentPage]);
 
   const getYouTubeId = (url) => {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
@@ -87,30 +98,37 @@ export default function Home() {
             </div>
 
             <motion.div layout className="row g-4">
-              {searchedRecipesCount === 0 && (
+              {/* Conditional rendering for Skeletons vs Content */}
+              {isLoading ? (
+                // Show 4 skeletons to fill the view during loading
+                Array.from({ length: 4 }).map((_, idx) => (
+                  <RecipeSkeleton key={idx} />
+                ))
+              ) : searchedRecipesCount === 0 ? (
                 <div className="col-12">
                   <div className="alert alert-warning mb-0" role="alert">
                     Не са намерени рецепти по зададените критерии.
                   </div>
                 </div>
+              ) : (
+                <AnimatePresence mode="popLayout">
+                  {paginatedRecipes.map((recipe) => (
+                    <Recipe
+                      key={recipe.id}
+                      {...recipe}
+                      isOpen={!!openRecipeById[recipe.id]}
+                      onToggle={toggleRecipe}
+                      onPlayVideo={setActiveVideo}
+                      isFavorite={favorites.includes(recipe.id)}
+                      onToggleFavorite={toggleFavorite}
+                    />
+                  ))}
+                </AnimatePresence>
               )}
-
-              <AnimatePresence mode="popLayout">
-                {paginatedRecipes.map((recipe) => (
-                  <Recipe
-                    key={recipe.id}
-                    {...recipe}
-                    isOpen={!!openRecipeById[recipe.id]}
-                    onToggle={toggleRecipe}
-                    onPlayVideo={setActiveVideo}
-                    isFavorite={favorites.includes(recipe.id)}
-                    onToggleFavorite={toggleFavorite}
-                  />
-                ))}
-              </AnimatePresence>
             </motion.div>
 
-            {searchedRecipesCount > 0 && totalPages > 1 && (
+            {/* Pagination controls (only visible if not loading and recipes exist) */}
+            {!isLoading && searchedRecipesCount > 0 && totalPages > 1 && (
               <div className="d-flex justify-content-center align-items-center gap-3 mt-4">
                 <button
                   className="btn btn-outline-warning btn-sm fw-bold"
@@ -135,7 +153,6 @@ export default function Home() {
 
           <aside className="col-xl-3 d-none d-xl-block">
             <div className="position-sticky" style={{ top: STICKY_TOP_OFFSET }}>
-              
               <div className="card shadow border-0 rounded-4 mb-4 bg-primary bg-opacity-10">
                 <div className="card-body">
                   <h5 className="card-title text-primary fw-bold">💡 Съвет на деня</h5>
@@ -172,7 +189,6 @@ export default function Home() {
                   </button>
                 </div>
               </div>
-
             </div>
           </aside>
         </div>
