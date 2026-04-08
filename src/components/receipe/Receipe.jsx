@@ -4,7 +4,8 @@ import { Link } from "react-router";
 export default function Recipe(props) {
   const { 
     id, img, title, desc, cat, 
-    videoLink, onPlayVideo, isFavorite, onToggleFavorite 
+    videoLink, onPlayVideo, isFavorite, onToggleFavorite,
+    prepTime, difficulty // New props
   } = props;
 
   const MotionDiv = motion.div;
@@ -42,6 +43,12 @@ export default function Recipe(props) {
 
         <div className="card-body d-flex flex-column">
           <h5 className="card-title fw-bold text-body">{title}</h5>
+          
+          <div className="d-flex gap-3 mb-2 small text-muted">
+            <span>⏱️ {prepTime} мин.</span>
+            <span>📊 {difficulty}</span>
+          </div>
+
           <p className="card-text text-muted small mb-3 flex-grow-1">{desc}</p>
 
           <Link 
